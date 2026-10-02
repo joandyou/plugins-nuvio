@@ -1,0 +1,70 @@
+{
+  "name": "Nuvio Vietnamese Providers",
+  "version": "1.2.0",
+  "scrapers": [
+    {
+      "id": "nguonc",
+      "name": "Phim NguonC",
+      "description": "Kho phim NguonC phong phú (Vietsub / Thuyết minh). Bóc tách HLS trực tiếp tại Client, không qua Proxy trung gian.",
+      "version": "1.2.1",
+      "author": "jtmy",
+      "supportedTypes": [
+        "movie",
+        "tv"
+      ],
+      "filename": "providers/nguonc.js",
+      "enabled": true,
+      "hasSettings": true,
+      "formats": [
+        "m3u8",
+        "mp4"
+      ],
+      "logo": "https://img.nguonc.com/images/img-09db3eee40f54cb2460578bf4de12a59a794f0bed8f461d9442b4073c20bed2d.png",
+      "contentLanguage": [
+        "vi"
+      ]
+    },
+    {
+      "id": "kkphim",
+      "name": "Phim KKPhim",
+      "description": "Kho phim KKPhim phong phú (Vietsub / Thuyết minh / Lồng tiếng). Luồng m3u8 HLS trực tiếp từ API, phát mượt native trên ExoPlayer.",
+      "version": "1.0.0",
+      "author": "jtmy",
+      "supportedTypes": [
+        "movie",
+        "tv"
+      ],
+      "filename": "providers/kkphim.js",
+      "enabled": true,
+      "hasSettings": true,
+      "formats": [
+        "m3u8"
+      ],
+      "logo": "https://kkphim1.com/uploads/logo-UdZ3lyzQ.png",
+      "contentLanguage": [
+        "vi"
+      ]
+    },
+    {
+      "id": "vsmov",
+      "name": "Phim VSMov",
+      "description": "Kho phim VSMov chất lượng cao (Vietsub / Thuyết minh / Lồng tiếng). Luồng m3u8 HLS native kèm phụ đề WebVTT trực tiếp tại Client.",
+      "version": "1.0.0",
+      "author": "jtmy",
+      "supportedTypes": [
+        "movie",
+        "tv"
+      ],
+      "filename": "providers/vsmov.js",
+      "enabled": true,
+      "hasSettings": true,
+      "formats": [
+        "m3u8"
+      ],
+      "logo": "https://vsmov.com/VSmov.png",
+      "contentLanguage": [
+        "vi"
+      ]
+    }
+  ]
+}
