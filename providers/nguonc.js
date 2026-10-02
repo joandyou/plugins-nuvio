@@ -528,7 +528,7 @@ function extractStreamsFromNguonCData(data, mediaType, season, episode, preferre
         // Trường hợp 1: Có m3u8 trực tiếp trong API NguonC
         if (rawM3u8) {
             streams.push({
-                name: "NguonC [" + serverName + "]",
+                name: "NguonC [" + serverName + "] " + movieTitle + " - " + epName,
                 title: movieTitle + " - " + epName + " (" + movieQuality + ")",
                 url: rawM3u8,
                 quality: movieQuality,
@@ -547,7 +547,7 @@ function extractStreamsFromNguonCData(data, mediaType, season, episode, preferre
                 tryFetchDirectHls(rawEmbed).then(function (directHls) {
                     if (directHls) {
                         streams.push({
-                            name: "NguonC [" + serverName + "]",
+                            name: "NguonC [" + serverName + "] " + movieTitle + " - " + epName,
                             title: movieTitle + " - " + epName + " (" + movieQuality + ")",
                             url: directHls,
                             quality: movieQuality,

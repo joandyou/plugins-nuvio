@@ -832,7 +832,7 @@ function extractStreamsFromVSMovData(data, mediaType, season, episode, preferred
         var task = extractVsmovStream(rawEmbed, rawM3u8).then(function (extracted) {
             if (extracted && extracted.m3u8) {
                 return {
-                    name: "VSMov [" + cleanServerName + "]",
+                    name: "VSMov [" + cleanServerName + "] " + movieTitle + " - " + epName,
                     title: movieTitle + " - " + epName + " (" + movieQuality + ")",
                     url: extracted.m3u8,
                     quality: movieQuality,

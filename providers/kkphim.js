@@ -535,7 +535,7 @@ function extractStreamsFromKkphimData(data, mediaType, season, episode, preferre
         if (rawM3u8 && !seenUrls[rawM3u8]) {
             seenUrls[rawM3u8] = true;
             streams.push({
-                name: "KKPhim [" + cleanServerName + "]",
+                name: "KKPhim [" + cleanServerName + "] " + movieTitle + " - " + epName,
                 title: movieTitle + " - " + epName + " (" + movieQuality + ")",
                 url: rawM3u8,
                 quality: movieQuality,
