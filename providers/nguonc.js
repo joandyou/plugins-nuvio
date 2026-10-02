@@ -29,6 +29,9 @@ var TMDB_KEYS = [
 var CF_FALLBACK_PROXY = "https://j-proxy-fallback.khx.workers.dev/?url=";
 var CODETABS_PROXY = "https://api.codetabs.com/v1/proxy?quest=";
 
+var STREAM_CACHE_TTL = 1000 * 60 * 30; // 30 phút – cache luồng phát
+var streamCache = {};
+
 // -----------------------------------------------------------------------------
 // 2. STRING & URL HELPERS (HERMES COMPATIBLE - NO WHATWG URL DEPENDENCY)
 // -----------------------------------------------------------------------------
@@ -581,7 +584,7 @@ function extractStreamsFromNguonCData(data, mediaType, season, episode, preferre
 // -----------------------------------------------------------------------------
 // 8. MAIN getStreams (EXPORTED TO NUVIO SCRAPERS ENGINE)
 // -----------------------------------------------------------------------------
-function getStreams(tmdbId, mediaType, season, episode, meta) {
+function _getStreams(tmdbId, mediaType, season, episode, meta) {
     console.log("[NguonC] 🔍 Tra cứu luồng: ID=" + tmdbId + ", type=" + mediaType + ", S=" + season + ", E=" + episode);
 
     var cleanId = cleanIdPrefix(tmdbId);
@@ -756,7 +759,26 @@ function onSettings() {
 }
 
 // -----------------------------------------------------------------------------
-// 9. EXPORTS (COMMONJS & GLOBAL FOR REACT NATIVE / HERMES)
+// 9. CACHE WRAPPER – getStreams (giảm thời gian dò phim khi gọi lại)
+// -----------------------------------------------------------------------------
+function getStreams(tmdbId, mediaType, season, episode, meta) {
+    var cleanId = cleanIdPrefix(tmdbId);
+    var cacheKey = "nguonc|" + cleanId + "|" + mediaType + "|" + (season || "") + "|" + (episode || "");
+    var entry = streamCache[cacheKey];
+    var now = Date.now();
+    if (entry && now - entry.time < STREAM_CACHE_TTL) {
+        console.log("[NguonC] 📦 Cache hit cho " + cacheKey);
+        return Promise.resolve(entry.data);
+    }
+    return _getStreams(tmdbId, mediaType, season, episode, meta).then(function (streams) {
+        streamCache[cacheKey] = { time: Date.now(), data: streams };
+        console.log("[NguonC] 💾 Đã lưu cache cho " + cacheKey);
+        return streams;
+    });
+}
+
+// -----------------------------------------------------------------------------
+// 10. EXPORTS (COMMONJS & GLOBAL FOR REACT NATIVE / HERMES)
 // -----------------------------------------------------------------------------
 if (typeof module !== "undefined" && module.exports) {
     module.exports = {

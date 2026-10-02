@@ -33,6 +33,8 @@ var CODETABS_PROXY = "https://api.codetabs.com/v1/proxy?quest=";
 
 var CACHE_TTL = 1000 * 60 * 10; // 10 phút
 var memoryCache = {};
+var STREAM_CACHE_TTL = 1000 * 60 * 30; // 30 phút – cache luồng phát
+var streamCache = {};
 
 // -----------------------------------------------------------------------------
 // 2. STRING & URL HELPERS (HERMES COMPATIBLE - NO WHATWG URL DEPENDENCY)
@@ -878,7 +880,7 @@ function extractStreamsFromVSMovData(data, mediaType, season, episode, preferred
 // -----------------------------------------------------------------------------
 // 9. MAIN getStreams (EXPORTED TO NUVIO SCRAPERS ENGINE)
 // -----------------------------------------------------------------------------
-function getStreams(tmdbId, mediaType, season, episode, meta) {
+function _getStreams(tmdbId, mediaType, season, episode, meta) {
     console.log("[VSMov] 🔍 Tra cứu luồng: ID=" + tmdbId + ", type=" + mediaType + ", S=" + season + ", E=" + episode);
 
     var cleanId = cleanIdPrefix(tmdbId);
@@ -1053,7 +1055,26 @@ function onSettings() {
 }
 
 // -----------------------------------------------------------------------------
-// 11. EXPORTS (COMMONJS & GLOBAL FOR REACT NATIVE / HERMES)
+// 11. CACHE WRAPPER – getStreams (giảm thời gian dò phim khi gọi lại)
+// -----------------------------------------------------------------------------
+function getStreams(tmdbId, mediaType, season, episode, meta) {
+    var cleanId = cleanIdPrefix(tmdbId);
+    var cacheKey = "vsmov|" + cleanId + "|" + mediaType + "|" + (season || "") + "|" + (episode || "");
+    var entry = streamCache[cacheKey];
+    var now = Date.now();
+    if (entry && now - entry.time < STREAM_CACHE_TTL) {
+        console.log("[VSMov] 📦 Cache hit cho " + cacheKey);
+        return Promise.resolve(entry.data);
+    }
+    return _getStreams(tmdbId, mediaType, season, episode, meta).then(function (streams) {
+        streamCache[cacheKey] = { time: Date.now(), data: streams };
+        console.log("[VSMov] 💾 Đã lưu cache cho " + cacheKey);
+        return streams;
+    });
+}
+
+// -----------------------------------------------------------------------------
+// 12. EXPORTS (COMMONJS & GLOBAL FOR REACT NATIVE / HERMES)
 // -----------------------------------------------------------------------------
 if (typeof module !== "undefined" && module.exports) {
     module.exports = {
